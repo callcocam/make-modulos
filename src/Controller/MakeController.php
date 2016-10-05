@@ -13,6 +13,8 @@ use Base\Controller\AbstractController;
 use Interop\Container\ContainerInterface;
 use Make\Model\Makes\Makes;
 use Make\Model\Makes\MakesRepository;
+use Make\Model\Modules\Modules;
+use Make\Model\Modules\ModulesRepository;
 use Make\Services\Controller;
 use Make\Services\ControllerFactory;
 use Make\Services\FactoryFilter;
@@ -20,6 +22,8 @@ use Make\Services\FactoryForm;
 use Make\Services\FactoryModel;
 use Make\Services\Filter;
 use Make\Services\Form;
+use Make\Services\MakeConfig;
+use Make\Services\MakeModule;
 use Make\Services\MakeNavigation;
 use Make\Services\Model;
 use Make\Services\Repository;
@@ -270,14 +274,81 @@ class MakeController extends AbstractController{
             $this->Messages()->flashSuccess("SERVIÇOS ATUALIZADA COM SUCESSO!");
         }
         else{
-            $this->Messages()->flashSuccess("NENHUM SERVIÇO PARA ESTE MODUE FOI ENCNTRADO!");
+            $this->Messages()->flashSuccess("NENHUM SERVIÇO PARA ESTE MODULE FOI ENCNTRADO!");
         }
         return $this->redirect()->toRoute("make");
     }
 
 
     public function createnewAction(){
-        return new ViewModel(['error'=>"Nenhum Parametro Valido Foi Passado, Você Deve Passar Um Model E Uma Tabela"]);
+        $this->table=ModulesRepository::class;
+        $this->model=Modules::class;
+        $ds=DIRECTORY_SEPARATOR;
+        $msg=[];
+        $id=$this->params()->fromRoute('id',0);
+        if(!$id){
+            $this->Messages()->flashError("NENHUM CODIGO VALIDO FOI PASSADO!");
+            return $this->redirect()->toRoute("make/default",['controller'=>'modules','action'=>'index']);
+        }
+
+        $modules=$this->getTable()->find($id,false);
+        if($modules->getData()) {
+            $data = $modules->getData();
+            if($data['state']){
+                $this->Messages()->flashError("O MODULO SELECIONADO ETA COM O STATE ARQUIVADO, NÂO PODE SER GERADO!");
+                return $this->redirect()->toRoute("make/default",['controller'=>'modules','action'=>'index']);
+            }
+            $path="./config/modules.config.php";
+            $config = new \Zend\Config\Config(include $path, true);
+            $config=$config->toArray();
+            $config[]=$data['alias'];
+           // $writer = new \Zend\Config\Writer\PhpArray();
+           // file_put_contents('./config/modules.config1.php', $writer->toString($config));die;
+           // Debug::dump($data);
+            $module=$data['alias'];
+            if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}"))){
+                if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}"))){
+                       $msg[]="CRIOU O MODULE {$module}";
+                    if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src"))){
+                        $msg[]="O Caminho {$ds}{$this->config->module}{$ds}{$module}{$ds}src Foi Criado Com Sucesso!";
+                        $makeModule=new MakeModule($data,$this->containerInterface);
+                        $makeModule->generateClass();
+                        if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}config"))){
+                            $msg[]="O Caminho {$ds}{$this->config->module}{$ds}{$module}{$ds}config Foi Criado Com Sucesso!";
+                            $config=new MakeConfig($data,$this->containerInterface);
+                            $config->generate(".{$ds}{$this->config->module}{$ds}{$module}{$ds}config{$ds}module.config.php");
+                        }
+
+                        $view=strtolower($module);
+                        if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view"))){
+                            if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$view}"))){
+                                if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$view}{$ds}{$view}"))){
+                                    file_put_contents(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$view}{$ds}{$view}{$ds}index.phtml",$module);
+                                    $msg[]="O Caminho {$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$view}{$ds}{$view}{$ds}index.phtml Foi Criado Com Sucesso!";
+                                }
+                            }
+                        }
+
+                        $model=$this->getModel();
+                        $model->exchangeArray($data);
+                        $model->setState('1');
+                        $model->setUrl(strtolower($module));
+                        $this->getTable()->update($model,$data['id']);
+                        $this->Messages()->flashSuccess(sprintf("MODULO CRIADO COM SUCESSO! %s",implode(PHP_EOL,$msg)));
+                    }
+                }
+
+
+            }
+            else{
+                $this->Messages()->flashError("NÂO FOI POSSIVEL CRIAR O MODULO!");
+            }
+
+        }
+        else{
+            $this->Messages()->flashError("NENHUM MODULO FOI ENCNTRADO!");
+        }
+        return $this->redirect()->toRoute("make/default",['controller'=>'modules','action'=>'index']);
     }
 
 
