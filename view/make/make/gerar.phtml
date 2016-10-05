@@ -1,0 +1,12 @@
+<pre>
+    <?php
+    if(is_array($error)){
+        foreach($error as $er){
+            echo sprintf("<p><h4>%s</h4></p>",$er);
+        }
+    }
+    else{
+        echo sprintf("<h3>%s</h3>",$error);
+    }
+    ?>
+</pre>

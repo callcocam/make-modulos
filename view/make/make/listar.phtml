@@ -1,0 +1,70 @@
+<section class="has-actions style-default-bright">
+    <!-- BEGIN INBOX -->
+    <div class="section-body">
+        <div class="row">
+ <div class="col-xs-12 col-md-10 col-lg-8 col-xs-offset-0 col-md-offset-1 col-lg-offset-2">
+<div class="card card-underline">
+    <div class="card-head">
+        <header>LISTA DE MODULOS DO SISTEMA</header>
+        <div class="tools">
+            <div class="btn-group">
+                <a href="/admin" class="btn btn-icon-toggle btn-close"><i class="md md-close"></i></a>  </div>
+            </div>
+    </div><!--end .card-head -->
+    <div class="card-body">
+        <?=$this->messages()?>
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+                <th>TITLE</th>
+                <th>MODULE</th>
+                <th>ARQUIVO</th>
+                <th>TABELA</th>
+                <th>AÇÃO</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php  if($data):?>
+                <?php foreach($data as $o):?>
+                    <tr>
+                        <td><?=$o['title'];?></td>
+                        <td><?=$o['parent'];?></td>
+                        <td><?=$o['arquivo']?></td>
+                        <td><?=$o['tabela']?></td>
+                        <td>
+                            <a href="<?=$this->url("{$this->route}/default",['controller'=>$this->controller,'action'=>'update','id'=>$o['id']])?>" class="btn btn-primary btn-xs"><span class="fa fa-edit"></span> <span class="hidden-xs">EDITAR</span> </a>
+                            | <a href="<?=$this->url("{$this->route}/default",['controller'=>$this->controller,'action'=>'delete','id'=>$o['id']])?>" class="btn btn-danger btn-xs excluir"><span class="fa fa-trash-o"></span> <span class="hidden-xs">EXCLUIR</span> </a>
+                            <?php if(!$o['state']):?>
+                                | <?=$this->TplListaHelper()->btnGrup($o);?>
+                            <?php endif;?>
+                        </td>
+                    </tr>
+                <?php endforeach;?>
+            <?php endif;?>
+            </tbody>
+        </table>
+    </div><!--end .card-body -->
+</div>
+            </div><!--end .section-body -->
+            <!-- END INBOX -->
+
+            <!-- BEGIN SECTION ACTION -->
+            <div class="section-action style-primary">
+                <div class="section-floating-action-row">
+                    <a class="btn ink-reaction btn-floating-action btn-lg btn-success" href="<?=$this->url("{$this->route}/default",['controller'=>$this->controller,'action'=>'create'])?>" data-toggle="tooltip" data-placement="top" data-original-title="Cadastrar Novo">
+                        <i class="md md-add"></i>
+                    </a>
+                    <a class="btn ink-reaction btn-floating-action btn-lg btn-warning confirm" data-question="POR FAVOR CONFIRME A OPERAÇÃO!" href="<?=$this->url("{$this->route}/default",['controller'=>'make','action'=>'services'])?>" data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Os Serviços">
+                        <i class="md md-settings"></i>
+                    </a>
+                    <a class="btn ink-reaction btn-floating-action btn-lg btn-primary confirm" data-question="POR FAVOR CONFIRME A OPERAÇÃO!" href="<?=$this->url("{$this->route}/default",['controller'=>'make','action'=>'navigation'])?>" data-toggle="tooltip" data-placement="top" data-original-title="Atualizar A Nevegação">
+                        <i class="md md-navigation"></i>
+                    </a>
+                    <a class="btn ink-reaction btn-floating-action btn-lg btn-danger confirm" data-question="POR FAVOR CONFIRME A OPERAÇÃO!" href="<?=$this->url("{$this->route}/default",['controller'=>'make','action'=>'traduzir'])?>" data-toggle="tooltip" data-placement="top" data-original-title="Atualizar A Tradução">
+                        <i class="md md-translate"></i>
+                    </a>
+                </div>
+            </div><!--end .section-action -->
+            <!-- END SECTION ACTION -->
+
+</section>
