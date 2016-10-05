@@ -276,4 +276,9 @@ class MakeController extends AbstractController{
     }
 
 
+    public function createnewAction(){
+        return new ViewModel(['error'=>"Nenhum Parametro Valido Foi Passado, Você Deve Passar Um Model E Uma Tabela"]);
+    }
+
+
 }
