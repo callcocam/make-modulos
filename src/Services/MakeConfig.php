@@ -60,6 +60,11 @@ class MakeConfig extends Options {
         $this->setBody('          ],');
         $this->setBody('      ],');
         $this->setBody('  ],');
+        $this->setBody('"controllers" => [');
+        $this->setBody('"factories" => [');
+        $this->setBody('    "%s\Controller\%s" => "%s\Controller\Factory\%sControllerFactory",');
+        $this->setBody(' ],');
+        $this->setBody('],');
         $this->setBody(' "view_manager" => [');
         $this->setBody('     "template_path_stack" => [');
         $this->setBody('         __DIR__ . "/../view",');
@@ -67,7 +72,7 @@ class MakeConfig extends Options {
         $this->setBody('   ],');
         $this->setBody(' ];');
         $body=implode(PHP_EOL, $this->getBody());
-        $this->my_body=sprintf($body, $route,$route,$module,$module);
+        $this->my_body=sprintf($body, $route,$route,$module,$module,$module,$module,$module,$module);
      }
 
     /**

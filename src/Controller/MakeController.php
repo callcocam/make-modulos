@@ -313,6 +313,28 @@ class MakeController extends AbstractController{
                         $msg[]="O Caminho {$ds}{$this->config->module}{$ds}{$module}{$ds}src Foi Criado Com Sucesso!";
                         $makeModule=new MakeModule($data,$this->containerInterface);
                         $makeModule->generateClass();
+                        if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller"))){
+                            mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller"));
+                        }
+
+                        if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller"))){
+                            mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller"));
+                        }
+                        $data['parent']=$module;
+                        $data['arquivo']=$module;
+                        $data['route']=$data['url'];
+                        $controller=new \Make\Services\MakeController($data,$this->containerInterface);
+                        $controller->generateClass();
+                        $msg[]="Controller {$module} Foi Criado Com Sucesso!";
+
+                        if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller{$ds}Factory"))){
+                            mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Controller{$ds}Factory"));
+                        }
+                        $controllerFactory=new ControllerFactory($data,$this->containerInterface);
+                        $controllerFactory->generateClass();
+                        $msg[]="Controller Factory {$module} Foi Criado Com Sucesso!";
+
+
                         if(mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}config"))){
                             $msg[]="O Caminho {$ds}{$this->config->module}{$ds}{$module}{$ds}config Foi Criado Com Sucesso!";
                             $config=new MakeConfig($data,$this->containerInterface);
@@ -331,7 +353,7 @@ class MakeController extends AbstractController{
 
                         $model=$this->getModel();
                         $model->exchangeArray($data);
-                        $model->setState('1');
+                       // $model->setState('1');
                         $model->setUrl(strtolower($module));
                         $this->getTable()->update($model,$data['id']);
                         $this->Messages()->flashSuccess(sprintf("MODULO CRIADO COM SUCESSO! %s",implode(PHP_EOL,$msg)));
