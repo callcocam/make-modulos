@@ -320,6 +320,7 @@ class MakesForm extends AbstractForm
         $this->setModified(["type" => "hidden"]);
         $this->setCsrf([]);
         $this->setSave([]);
+        $this->setSaveCopy([]);
 
     }
 

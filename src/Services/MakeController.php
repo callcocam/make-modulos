@@ -52,6 +52,7 @@ class MakeController extends Options{
         $this->setBody('$this->containerInterface=$containerInterface;');
         $this->setBody(sprintf('$this->route="%s";',strtolower($route)));
         $this->setBody(sprintf('$this->controller="%s";',strtolower($arquivo)));
+        $this->setBody(sprintf('$this->template="/%s/%s/index";',strtolower($arquivo),strtolower($arquivo)));
 
         // gera os methods podemos erar mais de um repetindo o codigo
         $methodOption = array('name' => "__construct",
