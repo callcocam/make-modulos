@@ -58,7 +58,7 @@ class MakeController extends Options{
         $methodOption = array('name' => "__construct",
             'parameter' => array(array('name' => "containerInterface", 'type' => 'ContainerInterface', 'value' => false)),
             'shortDescription' => '@param ContainerInterface $containerInterface',
-            'longDescription' => sprintf('@return \Ecommerce\Controller\%sController',$arquivo),
+            'longDescription' => sprintf('@return \%s\Controller\%sController',$arquivo,$arquivo),
             'datatype' => 'Controller',
             'body' => sprintf(implode(PHP_EOL, $this->getBody()), $arquivo));
 

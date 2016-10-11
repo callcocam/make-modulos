@@ -10,6 +10,8 @@ namespace Make\View\Helper;
 
 
 use Interop\Container\ContainerInterface;
+use Make\Model\Makes\MakesRepository;
+use Zend\Debug\Debug;
 use Zend\View\Helper\AbstractHelper;
 
 class TplListaHelper extends AbstractHelper {
@@ -34,6 +36,49 @@ class TplListaHelper extends AbstractHelper {
         return $partial;
 
     }
+
+    public function gerarTpllistar($routeCurrent,$currentController,$module,$block){
+       $make=$this->containerInterface->get(MakesRepository::class)->findOneBy(['route'=>$routeCurrent,'controller'=>$currentController]);
+        $partial="";
+        if($make->getResult()):
+            $parent=$make->getData()->getParent();
+            $route=$make->getData()->getRoute();
+            $controller=$make->getData()->getController();
+            if(!is_dir("./{$module}/{$parent}/view/{$route}/{$controller}")):
+                mkdir("./{$module}/{$parent}/view/{$route}/{$controller}");
+            endif;
+            if (!$this->view->resolver("{$route}/{$controller}/listar")) :
+                file_put_contents("./{$module}/{$parent}/view/{$route}/{$controller}/listar.phtml", $block);
+            endif;
+            $partial=$this->view->partial("{$route}/{$controller}/listar");
+        endif;
+        return $partial;
+    }
+
+    public function gerarTpleditar($routeCurrent,$currentController,$module,$tplEditar,$form){
+        $make=$this->containerInterface->get(MakesRepository::class)->findOneBy(['route'=>$routeCurrent,'controller'=>$currentController]);
+        $html="";
+        if($make->getResult()):
+            $parent=$make->getData()->getParent();
+            $route=$make->getData()->getRoute();
+            $controller=$make->getData()->getController();
+            if(!is_dir("./{$module}/{$parent}/view/{$route}/{$controller}")):
+                mkdir("./{$module}/{$parent}/view/{$route}/{$controller}");
+            endif;
+            if (!$this->view->resolver("{$route}/{$controller}/{$tplEditar}")) :
+                $html=str_replace("#open-form#", $this->view->MakeForm()->openTag($form), $this->view->partial("/make/partials/fieldset"));
+                $default=str_replace("#close-form#", $this->view->MakeForm()->closeTag(), $html);
+                $html=str_replace("#controller#", implode(PHP_EOL,$this->view->MakeForm()->getControle()), $default);
+                $default=str_replace("#datas#", implode(PHP_EOL,$this->view->MakeForm()->getDatas()), $html);
+                $html=str_replace("#geral#", implode(PHP_EOL,$this->view->MakeForm()->getGeral()), $default);
+                file_put_contents("./{$module}/{$parent}/view/{$route}/{$controller}/{$tplEditar}.phtml", $html);
+            endif;
+            $html = $this->view->partial("{$route}/{$controller}/{$tplEditar}");
+        endif;
+        return $html;
+    }
+
+
     public function btnGrup($o){?>
         <div class="btn-group">
             <a data-question="POR FAVOR CONFIRME A OPERAÇÃO!"  href="<?=$this->view->url("{$this->view->route}/default",['controller'=>'make','action'=>'gerar','id'=>$o['id']])?>" type="button" class="btn btn-success btn-xs confirm">Gerar Module</a>

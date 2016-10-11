@@ -9,9 +9,9 @@
 namespace Make\Services;
 
 
-use Admin\Model\Grupos\GruposRepository;
 use Base\Model\Cache;
 use Interop\Container\ContainerInterface;
+use Make\Model\Grupos\GruposRepository;
 use Make\Model\Makes\MakesRepository;
 use Zend\Code\Generator\FileGenerator;
 use Zend\Config\Writer\PhpArray;

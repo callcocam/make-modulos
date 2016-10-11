@@ -74,6 +74,11 @@ class MakeController extends AbstractController{
             if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Model{$ds}{$classe}"))){
                 mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}src{$ds}Model{$ds}{$classe}"));
             }
+            $viewTemplate=strtolower($data['controller']);
+            $viewTemplateRoute=strtolower($data['route']);
+            if(!is_dir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$viewTemplateRoute}{$ds}{$viewTemplate}"))){
+             mkdir(sprintf(".{$ds}{$this->config->module}{$ds}{$module}{$ds}view{$ds}{$viewTemplateRoute}{$ds}{$viewTemplate}"));
+            }
 
 
             /*Model Factory*/

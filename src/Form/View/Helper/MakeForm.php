@@ -370,7 +370,7 @@ class MakeForm extends Form{
      * Sets form layout class
      * @param AbstractForm $oForm
      * @param string $sFormLayout
-     * @return \TwbBundle\Form\View\Helper\TwbBundleForm
+     * @return $this
      */
     protected function setFormClass(AbstractForm $oForm, $sFormLayout = self::LAYOUT_HORIZONTAL)
     {
